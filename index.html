@@ -6,6 +6,41 @@
 <title>GitHub + Termux Complete Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4XQlIrsEBuVk2ijCWSNu0_LGmUAswO6g",
+    authDomain: "astudy-web.firebaseapp.com",
+    databaseURL: "https://astudy-web-default-rtdb.firebaseio.com",
+    projectId: "astudy-web",
+    storageBucket: "astudy-web.firebasestorage.app",
+    messagingSenderId: "772421294410",
+    appId: "1:772421294410:web:cb78df53a11c2c87f1c9b3"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // Expose to window so the regular script can call them
+  window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc };
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      window._fbUser = user;
+      window._onUserSignedIn && window._onUserSignedIn(user);
+    } else {
+      window._fbUser = null;
+      window._onUserSignedOut && window._onUserSignedOut();
+    }
+  });
+</script>
 <style>
   :root {
     --bg: #0a0e1a;
@@ -674,9 +709,141 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── AUTH BAR ── */
+  .auth-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 20px 0;
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .btn-google-signin {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: #1f1f1f;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .btn-google-signin:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+  .btn-google-signin img { width: 16px; height: 16px; }
+
+  .auth-user-chip {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 12px 5px 5px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .auth-user-chip:hover { border-color: rgba(239,68,68,0.5); }
+  .auth-user-chip.visible { display: inline-flex; }
+
+  .auth-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .auth-avatar-placeholder {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .auth-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .auth-signout {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .auth-saving {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    display: none;
+    align-items: center;
+    gap: 6px;
+  }
+  .auth-saving.visible { display: inline-flex; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+
+  /* modal save btn cloud indicator */
+  .cloud-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--success);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 8px;
+    justify-content: center;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .cloud-indicator.show { opacity: 1; }
 </style>
 </head>
 <body>
+
+<!-- ══ AUTH BAR ══ -->
+<div class="auth-bar">
+  <span class="auth-saving" id="authSaving">
+    <i class="fas fa-circle-notch spin"></i> Saving…
+  </span>
+
+  <!-- Signed-out: Google button -->
+  <button class="btn-google-signin" id="btnGoogleSignin" onclick="handleGoogleSignIn()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+    Sign in with Google to save your info
+  </button>
+
+  <!-- Signed-in: user chip -->
+  <div class="auth-user-chip" id="authUserChip" onclick="handleSignOut()" title="Click to sign out">
+    <img class="auth-avatar" id="authAvatar" src="" alt="">
+    <div>
+      <div class="auth-name" id="authDisplayName"></div>
+      <div class="auth-signout">click to sign out</div>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast">✓ Copied to clipboard!</div>
 
@@ -752,6 +919,14 @@
     <button class="btn-save" onclick="savePersonalization()">
       <i class="fas fa-wand-magic-sparkles"></i> Apply to All Commands
     </button>
+    <div class="cloud-indicator" id="cloudIndicator">
+      <i class="fas fa-cloud-arrow-up"></i> Saved to your Google account
+    </div>
+    <!-- Google sign-in nudge (shown when not logged in) -->
+    <div id="modalSigninNudge" style="display:none;background:rgba(0,212,170,0.07);border:1px solid rgba(0,212,170,0.2);border-radius:10px;padding:12px 14px;margin-top:10px;font-size:0.8rem;color:#94e8d8;display:flex;align-items:center;gap:10px">
+      <i class="fas fa-cloud" style="flex-shrink:0"></i>
+      <span>Sign in with Google (top-right) to <strong>auto-save</strong> your info across devices.</span>
+    </div>
     <button class="btn-reset" onclick="resetPersonalization()">
       <i class="fas fa-rotate-left"></i> Reset to defaults
     </button>
@@ -1298,15 +1473,100 @@
 
   let userData = { ...defaults };
 
+  /* ══════════════════════════════════════
+     FIREBASE AUTH
+  ══════════════════════════════════════ */
+  window._onUserSignedIn = async function(user) {
+    // Update UI
+    document.getElementById('btnGoogleSignin').style.display = 'none';
+    const chip = document.getElementById('authUserChip');
+    chip.classList.add('visible');
+    document.getElementById('authDisplayName').textContent = user.displayName || user.email;
+    const avatarEl = document.getElementById('authAvatar');
+    if (user.photoURL) {
+      avatarEl.src = user.photoURL;
+      avatarEl.style.display = 'block';
+    } else {
+      avatarEl.style.display = 'none';
+    }
+
+    // Load saved data from Firestore
+    try {
+      const { db, doc, getDoc } = window._fb;
+      const snap = await getDoc(doc(db, 'userProfiles', user.uid));
+      if (snap.exists()) {
+        const saved = snap.data();
+        userData = { ...defaults, ...saved };
+        applyToPage();
+        const status = document.getElementById('personalizeStatus');
+        document.getElementById('statusName').textContent = userData.username;
+        if (userData.username !== defaults.username) {
+          status.classList.add('visible');
+          document.getElementById('personalizeHint').style.display = 'none';
+        }
+        showToast('☁️ Profile loaded from Google account!');
+      }
+    } catch(e) { console.warn('Firestore load error', e); }
+
+    // Hide cloud nudge in modal since user is signed in
+    const nudge = document.getElementById('modalSigninNudge');
+    if (nudge) nudge.style.display = 'none';
+  };
+
+  window._onUserSignedOut = function() {
+    document.getElementById('btnGoogleSignin').style.display = '';
+    document.getElementById('authUserChip').classList.remove('visible');
+    const nudge = document.getElementById('modalSigninNudge');
+    if (nudge) nudge.style.display = 'flex';
+  };
+
+  async function handleGoogleSignIn() {
+    const { auth, GoogleAuthProvider, signInWithPopup } = window._fb;
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch(e) {
+      showToast('⚠️ Sign-in failed: ' + (e.message || 'unknown error'));
+    }
+  }
+
+  async function handleSignOut() {
+    if (!confirm('Sign out from your Google account?')) return;
+    const { auth, signOut } = window._fb;
+    await signOut(auth);
+    showToast('👋 Signed out');
+  }
+
+  async function saveToFirestore() {
+    if (!window._fbUser) return;
+    const { db, doc, setDoc } = window._fb;
+    const saving = document.getElementById('authSaving');
+    saving.classList.add('visible');
+    try {
+      await setDoc(doc(db, 'userProfiles', window._fbUser.uid), { ...userData });
+      saving.classList.remove('visible');
+      const ci = document.getElementById('cloudIndicator');
+      ci.classList.add('show');
+      setTimeout(() => ci.classList.remove('show'), 3000);
+    } catch(e) {
+      saving.classList.remove('visible');
+      showToast('⚠️ Could not save to cloud');
+      console.warn(e);
+    }
+  }
+
   /* ══ Modal ══ */
   function openModal() {
-    // Pre-fill inputs with current values
     document.getElementById('inp-username').value    = userData.username    === defaults.username    ? '' : userData.username;
     document.getElementById('inp-email').value       = userData.email       === defaults.email       ? '' : userData.email;
     document.getElementById('inp-displayname').value = userData.displayname === defaults.displayname ? '' : userData.displayname;
     document.getElementById('inp-reponame').value    = userData.reponame    === defaults.reponame    ? '' : userData.reponame;
     document.getElementById('inp-foldername').value  = userData.foldername  === defaults.foldername  ? '' : userData.foldername;
     document.getElementById('inp-storagepath').value = userData.storagepath;
+
+    // Show/hide nudge based on login state
+    const nudge = document.getElementById('modalSigninNudge');
+    if (nudge) nudge.style.display = window._fbUser ? 'none' : 'flex';
+
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
     setTimeout(() => document.getElementById('inp-username').focus(), 300);
@@ -1341,7 +1601,7 @@
   }
 
   /* ══ Save & apply ══ */
-  function savePersonalization() {
+  async function savePersonalization() {
     const u  = document.getElementById('inp-username').value.trim();
     const e  = document.getElementById('inp-email').value.trim();
     const dn = document.getElementById('inp-displayname').value.trim();
@@ -1359,13 +1619,15 @@
     applyToPage();
     closeModal();
 
-    // Show status
     const status = document.getElementById('personalizeStatus');
     document.getElementById('statusName').textContent = userData.username;
     status.classList.add('visible');
     document.getElementById('personalizeHint').style.display = 'none';
 
     showToast('✓ Commands personalized!');
+
+    // Save to Firestore if signed in
+    await saveToFirestore();
   }
 
   function resetPersonalization() {
@@ -1385,30 +1647,17 @@
     const fp = fullPath();
     const remote = userData.username + '/' + userData.reponame;
 
-    // Step 2 — git config
     setText('v-displayname', '"' + userData.displayname + '"');
     setText('v-email',       '"' + userData.email + '"');
-
-    // Step 3 — ssh-keygen
     setText('v-email2', '"' + userData.email + '"');
-
-    // Step 4 — success message
     setText('v-username-inline', userData.username);
-
-    // Step 5 — cd and safe.directory
     setText('v-fullpath',  fp);
     setText('v-fullpath2', fp);
-
-    // Step 6 — remote / push
     setText('v-reponame-hint', userData.reponame);
     setText('v-sshurl-preview', remote);
     setText('v-remote', remote);
     setText('v-username-newrepo', userData.username);
-
-    // Step 7 — CI/CD cd
     setText('v-fullpath3', fp);
-
-    // Cheat sheet rows
     setText('cheat-cd',     'cd ' + fp);
     setText('cheat-remote', 'git remote add origin git@github.com:' + remote + '.git');
   }
@@ -1447,7 +1696,7 @@
     const t = document.getElementById('toast');
     t.textContent = msg || '✓ Copied to clipboard!';
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
+    setTimeout(() => t.classList.remove('show'), 2500);
   }
 
   /* ══ Nav ══ */
@@ -1468,7 +1717,6 @@
     navSteps.forEach((n, i) => n.classList.toggle('active', i === current));
   });
 
-  // Keyboard: Escape closes modal
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 </body>
