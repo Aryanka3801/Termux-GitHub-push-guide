@@ -451,7 +451,8 @@
     <div class="nav-step" onclick="scrollToSection('s4')"><span class="step-num">🐙</span>GitHub</div>
     <div class="nav-step" onclick="scrollToSection('s5')"><span class="step-num">📁</span>Storage</div>
     <div class="nav-step" onclick="scrollToSection('s6')"><span class="step-num">🚀</span>Push</div>
-    <div class="nav-step" onclick="scrollToSection('s7')"><span class="step-num">📋</span>Cheatsheet</div>
+    <div class="nav-step" onclick="scrollToSection('s7')"><span class="step-num">⚙️</span>CI Build</div>
+    <div class="nav-step" onclick="scrollToSection('s8')"><span class="step-num">📋</span>Cheatsheet</div>
   </div>
 
   <!-- STEP 1 -->
@@ -717,8 +718,190 @@
 
   <div class="divider"></div>
 
-  <!-- CHEAT SHEET -->
+  <!-- STEP 7 — GitHub Actions APK Build -->
   <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-icon purple"><i class="fas fa-gear"></i></div>
+      <div>
+        <div class="section-title">GitHub Actions — Auto APK Build</div>
+        <div class="section-subtitle">Build your Android APK automatically on every push — no PC needed</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <i class="fas fa-circle-info" style="margin-top:2px;flex-shrink:0"></i>
+      <span>GitHub Actions lets you build your APK in the cloud for free. Every time you <code style="color:var(--accent)">git push</code> from Termux, GitHub compiles your app automatically.</span>
+    </div>
+
+    <!-- Step 1: Create workflow file -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">1</span> Create the workflow folder in Termux</div>
+      <div class="desc">Navigate to your project root, then create the required GitHub Actions directory.</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">terminal</span>
+          <button class="copy-btn" onclick="copyCode(this, 'cd /storage/emulated/0/Download/YourFolder\nmkdir -p .github/workflows')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="code-body"><span class="cmd">cd /storage/emulated/0/Download/<span class="accent-text">YourFolder</span></span>
+<span class="cmd">mkdir -p .github/workflows</span></div>
+      </div>
+    </div>
+
+    <!-- Step 2: Install nano -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">2</span> Install a text editor (nano)</div>
+      <div class="desc">You need a text editor inside Termux to create the YAML workflow file.</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">terminal</span>
+          <button class="copy-btn" onclick="copyCode(this, 'pkg install nano')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="code-body"><span class="cmd">pkg install nano</span></div>
+      </div>
+    </div>
+
+    <!-- Step 3: Create YAML -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">3</span> Create the workflow YAML file</div>
+      <div class="desc">Create and open the workflow file with nano.</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">terminal</span>
+          <button class="copy-btn" onclick="copyCode(this, 'nano .github/workflows/build-apk.yml')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="code-body"><span class="cmd">nano .github/workflows/build-apk.yml</span></div>
+      </div>
+    </div>
+
+    <!-- Step 4: Paste YAML content -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">4</span> Paste this workflow content</div>
+      <div class="desc">Copy everything below and paste it into nano. Then press <strong>Ctrl+O → Enter → Ctrl+X</strong> to save and exit.</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">build-apk.yml</span>
+          <button class="copy-btn" onclick="copyCode(this, 'name: Build APK\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v3\n\n      - name: Set up JDK 17\n        uses: actions/setup-java@v3\n        with:\n          java-version: \'17\'\n          distribution: \'temurin\'\n\n      - name: Grant Gradle execute permission\n        run: chmod +x gradlew\n\n      - name: Build Debug APK\n        run: ./gradlew assembleDebug\n\n      - name: Upload APK artifact\n        uses: actions/upload-artifact@v3\n        with:\n          name: debug-apk\n          path: app/build/outputs/apk/debug/app-debug.apk')"><i class="fas fa-copy"></i> Copy All</button>
+        </div>
+        <div class="code-body"><span class="comment"># .github/workflows/build-apk.yml</span>
+<span class="accent-text">name</span>: Build APK
+
+<span class="accent-text">on</span>:
+  <span class="accent-text">push</span>:
+    <span class="accent-text">branches</span>: [ main ]
+  <span class="accent-text">pull_request</span>:
+    <span class="accent-text">branches</span>: [ main ]
+
+<span class="accent-text">jobs</span>:
+  <span class="accent-text">build</span>:
+    <span class="accent-text">runs-on</span>: ubuntu-latest
+
+    <span class="accent-text">steps</span>:
+      - <span class="accent-text">name</span>: Checkout code
+        <span class="accent-text">uses</span>: actions/checkout@v3
+
+      - <span class="accent-text">name</span>: Set up JDK 17
+        <span class="accent-text">uses</span>: actions/setup-java@v3
+        <span class="accent-text">with</span>:
+          <span class="accent-text">java-version</span>: <span class="string">'17'</span>
+          <span class="accent-text">distribution</span>: <span class="string">'temurin'</span>
+
+      - <span class="accent-text">name</span>: Grant Gradle execute permission
+        <span class="accent-text">run</span>: chmod +x gradlew
+
+      - <span class="accent-text">name</span>: Build Debug APK
+        <span class="accent-text">run</span>: ./gradlew assembleDebug
+
+      - <span class="accent-text">name</span>: Upload APK artifact
+        <span class="accent-text">uses</span>: actions/upload-artifact@v3
+        <span class="accent-text">with</span>:
+          <span class="accent-text">name</span>: debug-apk
+          <span class="accent-text">path</span>: app/build/outputs/apk/debug/app-debug.apk</div>
+      </div>
+    </div>
+
+    <!-- Step 5: Push -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">5</span> Commit and push the workflow</div>
+      <div class="desc">Push the workflow file to GitHub — this will trigger your first automatic build.</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">terminal</span>
+          <button class="copy-btn" onclick="copyCode(this, 'git add .github/\ngit commit -m \"Add GitHub Actions APK build workflow\"\ngit push')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="code-body"><span class="cmd">git add .github/</span>
+<span class="cmd">git commit -m <span class="string">"Add GitHub Actions APK build workflow"</span></span>
+<span class="cmd">git push</span></div>
+      </div>
+    </div>
+
+    <!-- Step 6: Download APK -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">6</span> Download your built APK from GitHub</div>
+      <div class="gh-steps">
+        <div class="gh-step"><div class="gh-step-num">1</div><div class="gh-step-text">Go to your repo on <span>github.com</span></div></div>
+        <div class="gh-step"><div class="gh-step-num">2</div><div class="gh-step-text">Tap the <span>Actions</span> tab at the top</div></div>
+        <div class="gh-step"><div class="gh-step-num">3</div><div class="gh-step-text">Click the latest <span>Build APK</span> workflow run</div></div>
+        <div class="gh-step"><div class="gh-step-num">4</div><div class="gh-step-text">Scroll down to <span>Artifacts</span> → tap <span>debug-apk</span> to download</div></div>
+        <div class="gh-step"><div class="gh-step-num">5</div><div class="gh-step-text">Unzip the downloaded file — your <span>app-debug.apk</span> is inside ✅</div></div>
+      </div>
+    </div>
+
+    <!-- Bonus: Release APK -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-box-archive" style="margin-right:10px;color:#f59e0b"></i>Build a Release APK instead</div>
+      <div class="desc">Replace the <code style="color:var(--accent)">Build Debug APK</code> step with this to build a release (unsigned) APK.</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-label">release variant</span>
+          <button class="copy-btn" onclick="copyCode(this, '      - name: Build Release APK\n        run: ./gradlew assembleRelease\n\n      - name: Upload Release APK\n        uses: actions/upload-artifact@v3\n        with:\n          name: release-apk\n          path: app/build/outputs/apk/release/app-release-unsigned.apk')"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <div class="code-body">      - <span class="accent-text">name</span>: Build Release APK
+        <span class="accent-text">run</span>: ./gradlew assembleRelease
+
+      - <span class="accent-text">name</span>: Upload Release APK
+        <span class="accent-text">uses</span>: actions/upload-artifact@v3
+        <span class="accent-text">with</span>:
+          <span class="accent-text">name</span>: release-apk
+          <span class="accent-text">path</span>: app/build/outputs/apk/release/app-release-unsigned.apk</div>
+      </div>
+      <div class="warn-box" style="margin-bottom:0">
+        <i class="fas fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0"></i>
+        <span>Release APKs built this way are <strong>unsigned</strong>. You need to sign them before publishing to the Play Store.</span>
+      </div>
+    </div>
+
+    <!-- Cheat: Fix common errors -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-bug" style="margin-right:10px;color:#ef4444"></i>Common Build Errors &amp; Fixes</div>
+      <div class="gh-steps">
+        <div class="gh-step"><div class="gh-step-num" style="background:#ef4444">!</div><div class="gh-step-text"><span>gradlew: Permission denied</span> → Make sure the <code style="color:var(--accent)">chmod +x gradlew</code> step is in your YAML</div></div>
+        <div class="gh-step"><div class="gh-step-num" style="background:#ef4444">!</div><div class="gh-step-text"><span>SDK not found</span> → Your <code style="color:var(--accent)">local.properties</code> file is device-specific. Add it to <code style="color:var(--accent)">.gitignore</code></div></div>
+        <div class="gh-step"><div class="gh-step-num" style="background:#ef4444">!</div><div class="gh-step-text"><span>Build fails on Java version</span> → Change <code style="color:var(--accent)">java-version: '17'</code> to <code style="color:var(--accent)">'11'</code> for older projects</div></div>
+        <div class="gh-step"><div class="gh-step-num" style="background:#ef4444">!</div><div class="gh-step-text"><span>No artifacts uploaded</span> → Check the APK path matches your actual module name (may not be <code style="color:var(--accent)">app/</code>)</div></div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="desc">Add <code style="color:var(--accent)">local.properties</code> to your .gitignore:</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-label">terminal</span>
+            <button class="copy-btn" onclick="copyCode(this, 'echo \"local.properties\" >> .gitignore\ngit add .gitignore\ngit commit -m \"Ignore local.properties\"\ngit push')"><i class="fas fa-copy"></i> Copy</button>
+          </div>
+          <div class="code-body"><span class="cmd">echo <span class="string">"local.properties"</span> >> .gitignore</span>
+<span class="cmd">git add .gitignore</span>
+<span class="cmd">git commit -m <span class="string">"Ignore local.properties"</span></span>
+<span class="cmd">git push</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+  <div class="divider"></div>
+
+  <!-- CHEAT SHEET -->
+  <div class="section" id="s8" style="max-width:860px;margin:0 auto;padding:0 20px 80px;position:relative;z-index:1">
     <div class="section-header">
       <div class="section-icon green"><i class="fas fa-table-list"></i></div>
       <div>
@@ -792,12 +975,48 @@
             <td>Show your SSH public key</td>
             <td><button class="cheat-copy" onclick="copyCheat(this, 'cat ~/.ssh/id_ed25519.pub')">copy</button></td>
           </tr>
+          <tr style="border-top: 2px solid var(--accent2)">
+            <td class="cmd-cell" colspan="3" style="color:var(--accent2);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px">⚙️ GitHub Actions</td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">mkdir -p .github/workflows</td>
+            <td>Create Actions folder</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, 'mkdir -p .github/workflows')">copy</button></td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">pkg install nano</td>
+            <td>Install text editor in Termux</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, 'pkg install nano')">copy</button></td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">nano .github/workflows/build-apk.yml</td>
+            <td>Create/edit workflow file</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, 'nano .github/workflows/build-apk.yml')">copy</button></td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">./gradlew assembleDebug</td>
+            <td>Build debug APK (local)</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, './gradlew assembleDebug')">copy</button></td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">./gradlew assembleRelease</td>
+            <td>Build release APK (local)</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, './gradlew assembleRelease')">copy</button></td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">git add .github/</td>
+            <td>Stage workflow file</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, 'git add .github/')">copy</button></td>
+          </tr>
+          <tr>
+            <td class="cmd-cell">echo "local.properties" >> .gitignore</td>
+            <td>Ignore local SDK config</td>
+            <td><button class="cheat-copy" onclick="copyCheat(this, 'echo \"local.properties\" >> .gitignore')">copy</button></td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
-
-</div>
 
 <footer>
   Made for Termux + GitHub setup on Android &nbsp;·&nbsp; All commands are copy-ready
@@ -841,7 +1060,7 @@
   }
 
   // Highlight active nav on scroll
-  const sections = ['s1','s2','s3','s4','s5','s6','s7'];
+  const sections = ['s1','s2','s3','s4','s5','s6','s7','s8'];
   const navSteps = document.querySelectorAll('.nav-step');
   window.addEventListener('scroll', () => {
     let current = 0;
