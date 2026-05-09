@@ -32,7 +32,6 @@
     overflow-x: hidden;
   }
 
-  /* Animated background */
   body::before {
     content: '';
     position: fixed;
@@ -52,7 +51,6 @@
     z-index: 1;
   }
 
-  /* Header */
   header {
     text-align: center;
     padding: 60px 20px 40px;
@@ -94,7 +92,279 @@
     line-height: 1.6;
   }
 
-  /* Progress nav */
+  /* ── PERSONALIZE BUTTON ── */
+  .personalize-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 0 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-personalize {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--accent2), #9f67f7);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+    letter-spacing: 0.3px;
+  }
+  .btn-personalize:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(124,58,237,0.5);
+  }
+
+  .personalize-status {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--success);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+  .personalize-status.visible { display: inline-flex; }
+
+  /* ── USER TAG (inline highlight) ── */
+  .user-val {
+    color: #fbbf24;
+    font-weight: 700;
+    background: rgba(251,191,36,0.12);
+    border-radius: 4px;
+    padding: 0 3px;
+    transition: all 0.3s;
+  }
+
+  /* ── MODAL OVERLAY ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 500px;
+    padding: 32px;
+    position: relative;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.25s ease;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 12px;
+  }
+
+  .modal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent2), #9f67f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .modal-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+  .modal-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  .modal-close {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--text); }
+
+  /* Field groups */
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .field-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field-input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+  }
+  .field-input::placeholder { color: #374151; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  .modal-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .storage-options {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .storage-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .storage-chip:hover, .storage-chip.selected {
+    background: rgba(0,212,170,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-save {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent2), #9f67f7);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-reset {
+    width: 100%;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-reset:hover { color: var(--danger); border-color: var(--danger); }
+
+  /* ── PROGRESS NAV ── */
   .progress-nav {
     display: flex;
     gap: 0;
@@ -125,13 +395,8 @@
   }
   .nav-step:hover { color: var(--text); background: var(--surface2); }
   .nav-step.active { background: var(--accent); color: #000; }
-  .nav-step .step-num {
-    display: block;
-    font-size: 18px;
-    margin-bottom: 2px;
-  }
+  .nav-step .step-num { display: block; font-size: 18px; margin-bottom: 2px; }
 
-  /* Section */
   .section {
     margin-bottom: 32px;
     animation: fadeUp 0.4s ease both;
@@ -162,17 +427,16 @@
     flex-shrink: 0;
   }
 
-  .section-icon.green { background: rgba(0,212,170,0.15); color: var(--accent); }
-  .section-icon.purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
-  .section-icon.amber { background: rgba(245,158,11,0.15); color: var(--accent3); }
-  .section-icon.blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
-  .section-icon.red { background: rgba(239,68,68,0.15); color: #f87171; }
-  .section-icon.teal { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+  .section-icon.green  { background: rgba(0,212,170,0.15);   color: var(--accent); }
+  .section-icon.purple { background: rgba(124,58,237,0.15);  color: #a78bfa; }
+  .section-icon.amber  { background: rgba(245,158,11,0.15);  color: var(--accent3); }
+  .section-icon.blue   { background: rgba(59,130,246,0.15);  color: #60a5fa; }
+  .section-icon.red    { background: rgba(239,68,68,0.15);   color: #f87171; }
+  .section-icon.teal   { background: rgba(20,184,166,0.15);  color: #2dd4bf; }
 
-  .section-title { font-size: 1.4rem; font-weight: 800; }
+  .section-title    { font-size: 1.4rem; font-weight: 800; }
   .section-subtitle { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
 
-  /* Step number badge */
   .step-badge {
     display: inline-flex;
     align-items: center;
@@ -188,7 +452,6 @@
     margin-right: 10px;
   }
 
-  /* Cards */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -208,7 +471,6 @@
     color: var(--text);
   }
 
-  /* Info box */
   .info-box {
     background: rgba(0,212,170,0.08);
     border: 1px solid rgba(0,212,170,0.2);
@@ -237,7 +499,6 @@
     line-height: 1.6;
   }
 
-  /* Code block */
   .code-block {
     background: var(--code-bg);
     border: 1px solid var(--border);
@@ -297,7 +558,6 @@
   .code-body .string { color: #a78bfa; }
   .code-body .accent-text { color: var(--accent); }
 
-  /* Description text */
   .desc {
     font-size: 0.88rem;
     color: var(--muted);
@@ -305,12 +565,7 @@
     line-height: 1.6;
   }
 
-  /* GitHub steps visual */
-  .gh-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .gh-steps { display: flex; flex-direction: column; gap: 10px; }
 
   .gh-step {
     display: flex;
@@ -339,14 +594,12 @@
   .gh-step-text { line-height: 1.5; color: var(--text); }
   .gh-step-text span { color: var(--accent); font-weight: 600; }
 
-  /* Divider */
   .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--border), transparent);
     margin: 40px 0;
   }
 
-  /* Cheat sheet table */
   .cheat-table {
     width: 100%;
     border-collapse: collapse;
@@ -364,7 +617,7 @@
     text-transform: uppercase;
   }
   .cheat-table th:first-child { border-radius: 8px 0 0 0; }
-  .cheat-table th:last-child { border-radius: 0 8px 0 0; }
+  .cheat-table th:last-child  { border-radius: 0 8px 0 0; }
 
   .cheat-table td {
     padding: 10px 14px;
@@ -375,11 +628,7 @@
 
   .cheat-table tr:last-child td { border-bottom: none; }
   .cheat-table tr:hover td { background: rgba(255,255,255,0.02); }
-
-  .cheat-table .cmd-cell {
-    color: var(--accent);
-    white-space: nowrap;
-  }
+  .cheat-table .cmd-cell { color: var(--accent); white-space: nowrap; }
 
   .cheat-copy {
     background: none;
@@ -392,10 +641,9 @@
     font-family: 'JetBrains Mono', monospace;
     transition: all 0.2s;
   }
-  .cheat-copy:hover { border-color: var(--accent); color: var(--accent); }
+  .cheat-copy:hover  { border-color: var(--accent); color: var(--accent); }
   .cheat-copy.copied { border-color: var(--success); color: var(--success); }
 
-  /* Footer */
   footer {
     text-align: center;
     padding: 40px 20px;
@@ -405,7 +653,6 @@
     margin-top: 40px;
   }
 
-  /* Toast */
   .toast {
     position: fixed;
     bottom: 30px;
@@ -424,7 +671,6 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -434,6 +680,85 @@
 
 <div class="toast" id="toast">✓ Copied to clipboard!</div>
 
+<!-- ══════════════════ PERSONALIZE MODAL ══════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">
+        <div class="modal-icon">🧑‍💻</div>
+        <div>
+          <div class="modal-title">Personalize Your Guide</div>
+          <div class="modal-desc">Enter your details once — all commands will auto-fill with your real values. No more editing!</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- GitHub Details -->
+    <div class="modal-section-label"><i class="fab fa-github"></i> GitHub Details</div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-user"></i> GitHub Username</div>
+      <div class="field-hint">Your GitHub profile username (not email)</div>
+      <input class="field-input" id="inp-username" type="text" placeholder="e.g. johndoe" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-envelope"></i> GitHub Email</div>
+      <div class="field-hint">The email linked to your GitHub account</div>
+      <input class="field-input" id="inp-email" type="email" placeholder="e.g. johndoe@gmail.com" autocomplete="off">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-display"></i> Display Name</div>
+      <div class="field-hint">The name that will appear on your commits</div>
+      <input class="field-input" id="inp-displayname" type="text" placeholder="e.g. John Doe" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Repository Details -->
+    <div class="modal-section-label"><i class="fas fa-code-branch"></i> Repository Details</div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-book"></i> Repository Name</div>
+      <div class="field-hint">The name of your GitHub repository (no spaces)</div>
+      <input class="field-input" id="inp-reponame" type="text" placeholder="e.g. my-android-app" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Storage / Folder -->
+    <div class="modal-section-label"><i class="fas fa-folder"></i> Storage Location</div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-folder-open"></i> Project Folder Name</div>
+      <div class="field-hint">The folder name in your Android storage where your project lives</div>
+      <input class="field-input" id="inp-foldername" type="text" placeholder="e.g. MyAndroidProject" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label"><i class="fas fa-hard-drive"></i> Storage Path</div>
+      <div class="field-hint">Quick select where your project folder is stored</div>
+      <div class="storage-options">
+        <div class="storage-chip selected" id="chip-download" onclick="selectChip('download')">📥 Download</div>
+        <div class="storage-chip" id="chip-documents" onclick="selectChip('documents')">📄 Documents</div>
+        <div class="storage-chip" id="chip-dcim" onclick="selectChip('dcim')">🖼️ DCIM</div>
+        <div class="storage-chip" id="chip-custom" onclick="selectChip('custom')">✏️ Custom</div>
+      </div>
+      <input class="field-input" id="inp-storagepath" type="text" value="/storage/emulated/0/Download" placeholder="/storage/emulated/0/..." autocomplete="off" spellcheck="false">
+    </div>
+
+    <button class="btn-save" onclick="savePersonalization()">
+      <i class="fas fa-wand-magic-sparkles"></i> Apply to All Commands
+    </button>
+    <button class="btn-reset" onclick="resetPersonalization()">
+      <i class="fas fa-rotate-left"></i> Reset to defaults
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════ MAIN CONTENT ══════════════════ -->
 <div class="container">
 
   <!-- Header -->
@@ -442,6 +767,20 @@
     <h1>GitHub + Termux<br>Master Guide</h1>
     <p class="subtitle">Everything you need to push Android projects to GitHub using Termux — from install to first push.</p>
   </header>
+
+  <!-- Personalize CTA -->
+  <div class="personalize-bar">
+    <button class="btn-personalize" onclick="openModal()">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      Personalize Commands for Me
+    </button>
+    <span class="personalize-status" id="personalizeStatus">
+      <i class="fas fa-check-circle"></i> Personalized for <span id="statusName"></span>
+    </span>
+  </div>
+  <div style="text-align:center;font-size:0.78rem;color:var(--muted);margin-bottom:4px" id="personalizeHint">
+    ↑ Click to enter your GitHub username, repo name, and folder — commands auto-update!
+  </div>
 
   <!-- Nav -->
   <div class="progress-nav">
@@ -476,9 +815,9 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'pkg update && pkg upgrade\npkg install git')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-install')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">pkg update && pkg upgrade</span>
+        <div class="code-body" id="cmd-install"><span class="cmd">pkg update && pkg upgrade</span>
 <span class="cmd">pkg install git</span></div>
       </div>
     </div>
@@ -507,19 +846,19 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git config --global user.name \"YourName\"\ngit config --global user.email \"youremail@gmail.com\"')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-config')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">git config --global user.name <span class="string">"YourName"</span></span>
-<span class="cmd">git config --global user.email <span class="string">"youremail@gmail.com"</span></span></div>
+        <div class="code-body" id="cmd-config"><span class="cmd">git config --global user.name <span class="string user-val" id="v-displayname">"YourName"</span></span>
+<span class="cmd">git config --global user.email <span class="string user-val" id="v-email">"youremail@gmail.com"</span></span></div>
       </div>
 
       <div class="card-title" style="margin-top:16px"><span class="step-badge" style="background:#10b981">✓</span> Verify config</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git config --global --list')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-verify')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">git config --global --list</span></div>
+        <div class="code-body" id="cmd-verify"><span class="cmd">git config --global --list</span></div>
       </div>
     </div>
   </div>
@@ -542,9 +881,9 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'ssh-keygen -t ed25519 -C \"youremail@gmail.com\"')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-sshgen')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">ssh-keygen <span class="flag">-t</span> ed25519 <span class="flag">-C</span> <span class="string">"youremail@gmail.com"</span></span></div>
+        <div class="code-body" id="cmd-sshgen"><span class="cmd">ssh-keygen <span class="flag">-t</span> ed25519 <span class="flag">-C</span> <span class="string user-val" id="v-email2">"youremail@gmail.com"</span></span></div>
       </div>
 
       <div class="card-title" style="margin-top:16px"><span class="step-badge">4</span> View your public key</div>
@@ -552,9 +891,9 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'cat ~/.ssh/id_ed25519.pub')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-sshview')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">cat ~/.ssh/id_ed25519.pub</span></div>
+        <div class="code-body" id="cmd-sshview"><span class="cmd">cat ~/.ssh/id_ed25519.pub</span></div>
       </div>
       <div class="info-box" style="margin-bottom:0">
         <i class="fas fa-hand-pointer" style="margin-top:2px;flex-shrink:0"></i>
@@ -593,13 +932,13 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'ssh -T git@github.com')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-sshtest')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">ssh -T git@github.com</span></div>
+        <div class="code-body" id="cmd-sshtest"><span class="cmd">ssh -T git@github.com</span></div>
       </div>
       <div class="info-box" style="margin-bottom:0">
         <i class="fas fa-check-circle" style="margin-top:2px;flex-shrink:0"></i>
-        <span>Success looks like: <code style="color:var(--accent)">Hi YourUsername! You've successfully authenticated...</code></span>
+        <span>Success looks like: <code style="color:var(--accent)">Hi <span id="v-username-inline">YourUsername</span>! You've successfully authenticated...</code></span>
       </div>
     </div>
   </div>
@@ -622,19 +961,19 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'termux-setup-storage')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-storage')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">termux-setup-storage</span></div>
+        <div class="code-body" id="cmd-storage"><span class="cmd">termux-setup-storage</span></div>
       </div>
 
       <div class="card-title" style="margin-top:16px"><span class="step-badge">8</span> Navigate to your project folder</div>
-      <div class="desc">Replace <code style="color:var(--accent)">YourFolder</code> with your actual folder name.</div>
+      <div class="desc">Replace <code style="color:var(--accent)">YourFolder</code> with your actual folder name in storage.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'cd /storage/emulated/0/Download/YourFolder')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-cd')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">cd /storage/emulated/0/Download/<span class="accent-text">YourFolder</span></span></div>
+        <div class="code-body" id="cmd-cd"><span class="cmd">cd <span class="accent-text user-val" id="v-fullpath">/storage/emulated/0/Download/YourFolder</span></span></div>
       </div>
 
       <div class="card-title" style="margin-top:16px"><span class="step-badge">9</span> Fix ownership error (if it appears)</div>
@@ -642,9 +981,9 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git config --global --add safe.directory /storage/emulated/0/Download/YourFolder')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-safedir')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">git config --global --add safe.directory /storage/emulated/0/Download/<span class="accent-text">YourFolder</span></span></div>
+        <div class="code-body" id="cmd-safedir"><span class="cmd">git config --global --add safe.directory <span class="accent-text user-val" id="v-fullpath2">/storage/emulated/0/Download/YourFolder</span></span></div>
       </div>
     </div>
   </div>
@@ -665,26 +1004,26 @@
       <div class="card-title"><span class="step-badge">10</span> Create repo on GitHub</div>
       <div class="gh-steps">
         <div class="gh-step"><div class="gh-step-num">1</div><div class="gh-step-text">Go to <span>github.com</span> → tap <span>+</span> → <span>New Repository</span></div></div>
-        <div class="gh-step"><div class="gh-step-num">2</div><div class="gh-step-text">Give it a name (e.g. <span>my-android-app</span>)</div></div>
+        <div class="gh-step"><div class="gh-step-num">2</div><div class="gh-step-text">Give it a name — e.g. <span id="v-reponame-hint">my-android-app</span></div></div>
         <div class="gh-step"><div class="gh-step-num">3</div><div class="gh-step-text"><strong style="color:#ef4444">❌ Do NOT</strong> check "Initialize with README"</div></div>
         <div class="gh-step"><div class="gh-step-num">4</div><div class="gh-step-text">Click <span>Create Repository</span></div></div>
-        <div class="gh-step"><div class="gh-step-num">5</div><div class="gh-step-text">Copy the <span>SSH URL</span> → looks like <code style="color:var(--accent)">git@github.com:Username/repo.git</code></div></div>
+        <div class="gh-step"><div class="gh-step-num">5</div><div class="gh-step-text">Copy the <span>SSH URL</span> → looks like <code style="color:var(--accent)">git@github.com:<span id="v-sshurl-preview">Username/repo</span>.git</code></div></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title"><span class="step-badge">11</span> First time push — run all commands</div>
-      <div class="desc">Replace <code style="color:var(--accent)">Username</code> and <code style="color:var(--accent)">repo-name</code> with yours.</div>
+      <div class="desc">Your SSH remote URL is pre-filled below once you personalize.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">first push — all commands</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git init\ngit add .\ngit commit -m \"first commit\"\ngit branch -M main\ngit remote add origin git@github.com:Username/repo-name.git\ngit push -u origin main')"><i class="fas fa-copy"></i> Copy All</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-firstpush')"><i class="fas fa-copy"></i> Copy All</button>
         </div>
-        <div class="code-body"><span class="cmd">git init</span>
+        <div class="code-body" id="cmd-firstpush"><span class="cmd">git init</span>
 <span class="cmd">git add .</span>
 <span class="cmd">git commit -m <span class="string">"first commit"</span></span>
 <span class="cmd">git branch -M main</span>
-<span class="cmd">git remote add origin git@github.com:<span class="accent-text">Username/repo-name</span>.git</span>
+<span class="cmd">git remote add origin git@github.com:<span class="accent-text user-val" id="v-remote">Username/repo-name</span>.git</span>
 <span class="cmd">git push -u origin main</span></div>
       </div>
     </div>
@@ -694,9 +1033,9 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">update commands</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git add .\ngit commit -m \"describe your changes\"\ngit push')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-update')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">git add .</span>
+        <div class="code-body" id="cmd-update"><span class="cmd">git add .</span>
 <span class="cmd">git commit -m <span class="string">"describe your changes"</span></span>
 <span class="cmd">git push</span></div>
       </div>
@@ -707,10 +1046,10 @@
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">change remote</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git remote remove origin\ngit remote add origin git@github.com:Username/new-repo.git\ngit push -u origin main')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-changeremote')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">git remote remove origin</span>
-<span class="cmd">git remote add origin git@github.com:<span class="accent-text">Username/new-repo</span>.git</span>
+        <div class="code-body" id="cmd-changeremote"><span class="cmd">git remote remove origin</span>
+<span class="cmd">git remote add origin git@github.com:<span class="accent-text user-val" id="v-username-newrepo">Username</span>/new-repo.git</span>
 <span class="cmd">git push -u origin main</span></div>
       </div>
     </div>
@@ -733,56 +1072,52 @@
       <span>GitHub Actions lets you build your APK in the cloud for free. Every time you <code style="color:var(--accent)">git push</code> from Termux, GitHub compiles your app automatically.</span>
     </div>
 
-    <!-- Step 1: Create workflow file -->
     <div class="card">
       <div class="card-title"><span class="step-badge">1</span> Create the workflow folder in Termux</div>
       <div class="desc">Navigate to your project root, then create the required GitHub Actions directory.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'cd /storage/emulated/0/Download/YourFolder\nmkdir -p .github/workflows')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-cicd')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">cd /storage/emulated/0/Download/<span class="accent-text">YourFolder</span></span>
+        <div class="code-body" id="cmd-cicd"><span class="cmd">cd <span class="accent-text user-val" id="v-fullpath3">/storage/emulated/0/Download/YourFolder</span></span>
 <span class="cmd">mkdir -p .github/workflows</span></div>
       </div>
     </div>
 
-    <!-- Step 2: Install nano -->
     <div class="card">
       <div class="card-title"><span class="step-badge">2</span> Install a text editor (nano)</div>
       <div class="desc">You need a text editor inside Termux to create the YAML workflow file.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'pkg install nano')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-nano')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">pkg install nano</span></div>
+        <div class="code-body" id="cmd-nano"><span class="cmd">pkg install nano</span></div>
       </div>
     </div>
 
-    <!-- Step 3: Create YAML -->
     <div class="card">
       <div class="card-title"><span class="step-badge">3</span> Create the workflow YAML file</div>
       <div class="desc">Create and open the workflow file with nano.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'nano .github/workflows/build-apk.yml')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-nanocreate')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">nano .github/workflows/build-apk.yml</span></div>
+        <div class="code-body" id="cmd-nanocreate"><span class="cmd">nano .github/workflows/build-apk.yml</span></div>
       </div>
     </div>
 
-    <!-- Step 4: Paste YAML content -->
     <div class="card">
       <div class="card-title"><span class="step-badge">4</span> Paste this workflow content</div>
       <div class="desc">Copy everything below and paste it into nano. Then press <strong>Ctrl+O → Enter → Ctrl+X</strong> to save and exit.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">build-apk.yml</span>
-          <button class="copy-btn" onclick="copyCode(this, 'name: Build APK\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v3\n\n      - name: Set up JDK 17\n        uses: actions/setup-java@v3\n        with:\n          java-version: \'17\'\n          distribution: \'temurin\'\n\n      - name: Grant Gradle execute permission\n        run: chmod +x gradlew\n\n      - name: Build Debug APK\n        run: ./gradlew assembleDebug\n\n      - name: Upload APK artifact\n        uses: actions/upload-artifact@v3\n        with:\n          name: debug-apk\n          path: app/build/outputs/apk/debug/app-debug.apk')"><i class="fas fa-copy"></i> Copy All</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-yaml')"><i class="fas fa-copy"></i> Copy All</button>
         </div>
-        <div class="code-body"><span class="comment"># .github/workflows/build-apk.yml</span>
+        <div class="code-body" id="cmd-yaml"><span class="comment"># .github/workflows/build-apk.yml</span>
 <span class="accent-text">name</span>: Build APK
 
 <span class="accent-text">on</span>:
@@ -819,22 +1154,20 @@
       </div>
     </div>
 
-    <!-- Step 5: Push -->
     <div class="card">
       <div class="card-title"><span class="step-badge">5</span> Commit and push the workflow</div>
       <div class="desc">Push the workflow file to GitHub — this will trigger your first automatic build.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">terminal</span>
-          <button class="copy-btn" onclick="copyCode(this, 'git add .github/\ngit commit -m \"Add GitHub Actions APK build workflow\"\ngit push')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-pushworkflow')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body"><span class="cmd">git add .github/</span>
+        <div class="code-body" id="cmd-pushworkflow"><span class="cmd">git add .github/</span>
 <span class="cmd">git commit -m <span class="string">"Add GitHub Actions APK build workflow"</span></span>
 <span class="cmd">git push</span></div>
       </div>
     </div>
 
-    <!-- Step 6: Download APK -->
     <div class="card">
       <div class="card-title"><span class="step-badge">6</span> Download your built APK from GitHub</div>
       <div class="gh-steps">
@@ -846,16 +1179,15 @@
       </div>
     </div>
 
-    <!-- Bonus: Release APK -->
     <div class="card">
       <div class="card-title"><i class="fas fa-box-archive" style="margin-right:10px;color:#f59e0b"></i>Build a Release APK instead</div>
       <div class="desc">Replace the <code style="color:var(--accent)">Build Debug APK</code> step with this to build a release (unsigned) APK.</div>
       <div class="code-block">
         <div class="code-header">
           <span class="code-label">release variant</span>
-          <button class="copy-btn" onclick="copyCode(this, '      - name: Build Release APK\n        run: ./gradlew assembleRelease\n\n      - name: Upload Release APK\n        uses: actions/upload-artifact@v3\n        with:\n          name: release-apk\n          path: app/build/outputs/apk/release/app-release-unsigned.apk')"><i class="fas fa-copy"></i> Copy</button>
+          <button class="copy-btn" onclick="copyDynamic(this,'cmd-release')"><i class="fas fa-copy"></i> Copy</button>
         </div>
-        <div class="code-body">      - <span class="accent-text">name</span>: Build Release APK
+        <div class="code-body" id="cmd-release">      - <span class="accent-text">name</span>: Build Release APK
         <span class="accent-text">run</span>: ./gradlew assembleRelease
 
       - <span class="accent-text">name</span>: Upload Release APK
@@ -870,7 +1202,6 @@
       </div>
     </div>
 
-    <!-- Cheat: Fix common errors -->
     <div class="card">
       <div class="card-title"><i class="fas fa-bug" style="margin-right:10px;color:#ef4444"></i>Common Build Errors &amp; Fixes</div>
       <div class="gh-steps">
@@ -884,19 +1215,16 @@
         <div class="code-block">
           <div class="code-header">
             <span class="code-label">terminal</span>
-            <button class="copy-btn" onclick="copyCode(this, 'echo \"local.properties\" >> .gitignore\ngit add .gitignore\ngit commit -m \"Ignore local.properties\"\ngit push')"><i class="fas fa-copy"></i> Copy</button>
+            <button class="copy-btn" onclick="copyDynamic(this,'cmd-gitignore')"><i class="fas fa-copy"></i> Copy</button>
           </div>
-          <div class="code-body"><span class="cmd">echo <span class="string">"local.properties"</span> >> .gitignore</span>
+          <div class="code-body" id="cmd-gitignore"><span class="cmd">echo <span class="string">"local.properties"</span> >> .gitignore</span>
 <span class="cmd">git add .gitignore</span>
 <span class="cmd">git commit -m <span class="string">"Ignore local.properties"</span></span>
 <span class="cmd">git push</span></div>
         </div>
       </div>
     </div>
-
   </div>
-
-</div>
 
   <div class="divider"></div>
 
@@ -920,116 +1248,187 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="cmd-cell">git status</td>
-            <td>See changed files</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git status')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git add .</td>
-            <td>Stage all changes</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git add .')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git commit -m "msg"</td>
-            <td>Save a snapshot</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git commit -m \"your message\"')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git push</td>
-            <td>Upload to GitHub</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git push')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git pull</td>
-            <td>Download latest from GitHub</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git pull')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git log --oneline</td>
-            <td>See commit history</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git log --oneline')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git reset</td>
-            <td>Undo last git add</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git reset')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git remote -v</td>
-            <td>See current remote URL</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git remote -v')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git remote remove origin</td>
-            <td>Remove current remote</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git remote remove origin')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">ssh -T git@github.com</td>
-            <td>Test SSH connection</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'ssh -T git@github.com')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">cat ~/.ssh/id_ed25519.pub</td>
-            <td>Show your SSH public key</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'cat ~/.ssh/id_ed25519.pub')">copy</button></td>
-          </tr>
+          <tr><td class="cmd-cell">git status</td><td>See changed files</td><td><button class="cheat-copy" onclick="copyCheat(this,'git status')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git add .</td><td>Stage all changes</td><td><button class="cheat-copy" onclick="copyCheat(this,'git add .')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git commit -m "msg"</td><td>Save a snapshot</td><td><button class="cheat-copy" onclick="copyCheat(this,'git commit -m \"your message\"')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git push</td><td>Upload to GitHub</td><td><button class="cheat-copy" onclick="copyCheat(this,'git push')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git pull</td><td>Download latest from GitHub</td><td><button class="cheat-copy" onclick="copyCheat(this,'git pull')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git log --oneline</td><td>See commit history</td><td><button class="cheat-copy" onclick="copyCheat(this,'git log --oneline')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git reset</td><td>Undo last git add</td><td><button class="cheat-copy" onclick="copyCheat(this,'git reset')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git remote -v</td><td>See current remote URL</td><td><button class="cheat-copy" onclick="copyCheat(this,'git remote -v')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git remote remove origin</td><td>Remove current remote</td><td><button class="cheat-copy" onclick="copyCheat(this,'git remote remove origin')">copy</button></td></tr>
+          <tr><td class="cmd-cell">ssh -T git@github.com</td><td>Test SSH connection</td><td><button class="cheat-copy" onclick="copyCheat(this,'ssh -T git@github.com')">copy</button></td></tr>
+          <tr><td class="cmd-cell">cat ~/.ssh/id_ed25519.pub</td><td>Show your SSH public key</td><td><button class="cheat-copy" onclick="copyCheat(this,'cat ~/.ssh/id_ed25519.pub')">copy</button></td></tr>
+
+          <!-- personalized rows -->
+          <tr><td class="cmd-cell" id="cheat-cd">cd /storage/emulated/0/Download/YourFolder</td><td>Go to your project folder</td><td><button class="cheat-copy" onclick="copyCheat(this, document.getElementById('cheat-cd').textContent)">copy</button></td></tr>
+          <tr><td class="cmd-cell" id="cheat-remote">git remote add origin git@github.com:Username/repo-name.git</td><td>Add your GitHub remote</td><td><button class="cheat-copy" onclick="copyCheat(this, document.getElementById('cheat-remote').textContent)">copy</button></td></tr>
+
           <tr style="border-top: 2px solid var(--accent2)">
             <td class="cmd-cell" colspan="3" style="color:var(--accent2);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:8px 14px 4px">⚙️ GitHub Actions</td>
           </tr>
-          <tr>
-            <td class="cmd-cell">mkdir -p .github/workflows</td>
-            <td>Create Actions folder</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'mkdir -p .github/workflows')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">pkg install nano</td>
-            <td>Install text editor in Termux</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'pkg install nano')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">nano .github/workflows/build-apk.yml</td>
-            <td>Create/edit workflow file</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'nano .github/workflows/build-apk.yml')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">./gradlew assembleDebug</td>
-            <td>Build debug APK (local)</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, './gradlew assembleDebug')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">./gradlew assembleRelease</td>
-            <td>Build release APK (local)</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, './gradlew assembleRelease')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">git add .github/</td>
-            <td>Stage workflow file</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'git add .github/')">copy</button></td>
-          </tr>
-          <tr>
-            <td class="cmd-cell">echo "local.properties" >> .gitignore</td>
-            <td>Ignore local SDK config</td>
-            <td><button class="cheat-copy" onclick="copyCheat(this, 'echo \"local.properties\" >> .gitignore')">copy</button></td>
-          </tr>
+          <tr><td class="cmd-cell">mkdir -p .github/workflows</td><td>Create Actions folder</td><td><button class="cheat-copy" onclick="copyCheat(this,'mkdir -p .github/workflows')">copy</button></td></tr>
+          <tr><td class="cmd-cell">pkg install nano</td><td>Install text editor in Termux</td><td><button class="cheat-copy" onclick="copyCheat(this,'pkg install nano')">copy</button></td></tr>
+          <tr><td class="cmd-cell">nano .github/workflows/build-apk.yml</td><td>Create/edit workflow file</td><td><button class="cheat-copy" onclick="copyCheat(this,'nano .github/workflows/build-apk.yml')">copy</button></td></tr>
+          <tr><td class="cmd-cell">./gradlew assembleDebug</td><td>Build debug APK (local)</td><td><button class="cheat-copy" onclick="copyCheat(this,'./gradlew assembleDebug')">copy</button></td></tr>
+          <tr><td class="cmd-cell">./gradlew assembleRelease</td><td>Build release APK (local)</td><td><button class="cheat-copy" onclick="copyCheat(this,'./gradlew assembleRelease')">copy</button></td></tr>
+          <tr><td class="cmd-cell">git add .github/</td><td>Stage workflow file</td><td><button class="cheat-copy" onclick="copyCheat(this,'git add .github/')">copy</button></td></tr>
+          <tr><td class="cmd-cell">echo "local.properties" >> .gitignore</td><td>Ignore local SDK config</td><td><button class="cheat-copy" onclick="copyCheat(this,'echo \"local.properties\" >> .gitignore')">copy</button></td></tr>
         </tbody>
       </table>
     </div>
   </div>
+
+</div><!-- /container -->
 
 <footer>
   Made for Termux + GitHub setup on Android &nbsp;·&nbsp; All commands are copy-ready
 </footer>
 
 <script>
-  function copyCode(btn, text) {
-    navigator.clipboard.writeText(text).then(() => {
+  /* ══ User data store ══ */
+  const defaults = {
+    username:    'Username',
+    email:       'youremail@gmail.com',
+    displayname: 'YourName',
+    reponame:    'repo-name',
+    foldername:  'YourFolder',
+    storagepath: '/storage/emulated/0/Download'
+  };
+
+  let userData = { ...defaults };
+
+  /* ══ Modal ══ */
+  function openModal() {
+    // Pre-fill inputs with current values
+    document.getElementById('inp-username').value    = userData.username    === defaults.username    ? '' : userData.username;
+    document.getElementById('inp-email').value       = userData.email       === defaults.email       ? '' : userData.email;
+    document.getElementById('inp-displayname').value = userData.displayname === defaults.displayname ? '' : userData.displayname;
+    document.getElementById('inp-reponame').value    = userData.reponame    === defaults.reponame    ? '' : userData.reponame;
+    document.getElementById('inp-foldername').value  = userData.foldername  === defaults.foldername  ? '' : userData.foldername;
+    document.getElementById('inp-storagepath').value = userData.storagepath;
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('inp-username').focus(), 300);
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  /* ══ Storage chips ══ */
+  const storagePaths = {
+    download:  '/storage/emulated/0/Download',
+    documents: '/storage/emulated/0/Documents',
+    dcim:      '/storage/emulated/0/DCIM',
+    custom:    ''
+  };
+
+  function selectChip(key) {
+    document.querySelectorAll('.storage-chip').forEach(c => c.classList.remove('selected'));
+    document.getElementById('chip-' + key).classList.add('selected');
+    if (key !== 'custom') {
+      document.getElementById('inp-storagepath').value = storagePaths[key];
+    } else {
+      document.getElementById('inp-storagepath').value = '';
+      document.getElementById('inp-storagepath').focus();
+    }
+  }
+
+  /* ══ Save & apply ══ */
+  function savePersonalization() {
+    const u  = document.getElementById('inp-username').value.trim();
+    const e  = document.getElementById('inp-email').value.trim();
+    const dn = document.getElementById('inp-displayname').value.trim();
+    const r  = document.getElementById('inp-reponame').value.trim();
+    const f  = document.getElementById('inp-foldername').value.trim();
+    const sp = document.getElementById('inp-storagepath').value.trim();
+
+    userData.username    = u  || defaults.username;
+    userData.email       = e  || defaults.email;
+    userData.displayname = dn || defaults.displayname;
+    userData.reponame    = r  || defaults.reponame;
+    userData.foldername  = f  || defaults.foldername;
+    userData.storagepath = sp || defaults.storagepath;
+
+    applyToPage();
+    closeModal();
+
+    // Show status
+    const status = document.getElementById('personalizeStatus');
+    document.getElementById('statusName').textContent = userData.username;
+    status.classList.add('visible');
+    document.getElementById('personalizeHint').style.display = 'none';
+
+    showToast('✓ Commands personalized!');
+  }
+
+  function resetPersonalization() {
+    userData = { ...defaults };
+    applyToPage();
+    document.getElementById('personalizeStatus').classList.remove('visible');
+    document.getElementById('personalizeHint').style.display = '';
+    closeModal();
+    showToast('↩ Reset to defaults');
+  }
+
+  function fullPath() {
+    return userData.storagepath.replace(/\/+$/, '') + '/' + userData.foldername;
+  }
+
+  function applyToPage() {
+    const fp = fullPath();
+    const remote = userData.username + '/' + userData.reponame;
+
+    // Step 2 — git config
+    setText('v-displayname', '"' + userData.displayname + '"');
+    setText('v-email',       '"' + userData.email + '"');
+
+    // Step 3 — ssh-keygen
+    setText('v-email2', '"' + userData.email + '"');
+
+    // Step 4 — success message
+    setText('v-username-inline', userData.username);
+
+    // Step 5 — cd and safe.directory
+    setText('v-fullpath',  fp);
+    setText('v-fullpath2', fp);
+
+    // Step 6 — remote / push
+    setText('v-reponame-hint', userData.reponame);
+    setText('v-sshurl-preview', remote);
+    setText('v-remote', remote);
+    setText('v-username-newrepo', userData.username);
+
+    // Step 7 — CI/CD cd
+    setText('v-fullpath3', fp);
+
+    // Cheat sheet rows
+    setText('cheat-cd',     'cd ' + fp);
+    setText('cheat-remote', 'git remote add origin git@github.com:' + remote + '.git');
+  }
+
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  /* ══ Copy helpers ══ */
+  function copyDynamic(btn, blockId) {
+    const block = document.getElementById(blockId);
+    if (!block) return;
+    const text = block.innerText || block.textContent;
+    navigator.clipboard.writeText(text.trim()).then(() => {
       btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
       btn.classList.add('copied');
       showToast();
       setTimeout(() => {
-        btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copy' + (btn.textContent.includes('All') ? ' All' : '');
         btn.classList.remove('copied');
       }, 2000);
     });
@@ -1040,26 +1439,24 @@
       btn.textContent = '✓';
       btn.classList.add('copied');
       showToast();
-      setTimeout(() => {
-        btn.textContent = 'copy';
-        btn.classList.remove('copied');
-      }, 2000);
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
     });
   }
 
-  function showToast() {
+  function showToast(msg) {
     const t = document.getElementById('toast');
+    t.textContent = msg || '✓ Copied to clipboard!';
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
+    setTimeout(() => t.classList.remove('show'), 2200);
   }
 
+  /* ══ Nav ══ */
   function scrollToSection(id) {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
     document.querySelectorAll('.nav-step').forEach(n => n.classList.remove('active'));
     event.target.closest('.nav-step').classList.add('active');
   }
 
-  // Highlight active nav on scroll
   const sections = ['s1','s2','s3','s4','s5','s6','s7','s8'];
   const navSteps = document.querySelectorAll('.nav-step');
   window.addEventListener('scroll', () => {
@@ -1070,6 +1467,9 @@
     });
     navSteps.forEach((n, i) => n.classList.toggle('active', i === current));
   });
+
+  // Keyboard: Escape closes modal
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
